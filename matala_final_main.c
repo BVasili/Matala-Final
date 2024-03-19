@@ -56,14 +56,12 @@ void printdate(Date *ptr)
 
 void print_member(LibMember *ptr)
 {
-	Date *ptr2birth = &(ptr->DateOfBirth);
-	Date *ptr2loan = &(ptr->LoanBooks);
+	Date* ptr2birth = &(ptr->DateOfBirth);
 	printf("Name: %s\n", ptr->Name);
 	printf("ID: %s\n", ptr->Id);
 	printf("Date of Birth: ");
 	printdate(ptr2birth);
-	printf("");
-	printf("");
+	
 }
 
 void search_id(LibMember *ptr)
