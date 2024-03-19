@@ -1,44 +1,72 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 #define nMems 300
 #define IDdigits 10
 
-typedef struct {
+typedef struct
+{
 	unsigned short int Year;
 	unsigned short int Month;
 	unsigned short int Day;
 } Date;
 
-typedef struct {
-	char BookName[1];
-	char AuthorName[1];
+typedef struct
+{
+	char *BookName;
+	char *AuthorName;
 	Date ReturnDate;
 } Book;
 
-typedef struct {
-	char Name[1];
+typedef struct
+{
+	char *Name;
 	char Id[IDdigits];
 	Date DateOfBirth;
 	int nBooks;
-	Book  LoanBooks[4];
+	Book *LoanBooks;
 
 } LibMember;
 
-void print_member(int*);
-void search_id(int*);
+void print_member(LibMember *);
+void search_id(LibMember *);
+void printdate(Date *);
+void printloanedbook(LibMember*,int);
 int menu();
 
-int main() {
+int main()
+{
 	printf("hello world");
 }
 
-void print_member(int*)
-{
+void printloanedbook(LibMember *ptr,int index){
+Date *ptr2return = &(ptr->LoanBooks[index].ReturnDate);
+printf("Name of book: %s\n",ptr->LoanBooks[index].BookName);
+printf("Name of Author: %s\n",ptr->LoanBooks[index].AuthorName);
+printf("Return date: ");
+printdate(ptr2return);
+
 }
 
-void search_id(int*)
+void printdate(Date *ptr)
+{
+	printf("%d.%d.%d\n", ptr->Day, ptr->Month, ptr->Year);
+}
+
+void print_member(LibMember *ptr)
+{
+	Date *ptr2birth = &(ptr->DateOfBirth);
+	Date *ptr2loan = &(ptr->LoanBooks);
+	printf("Name: %s\n", ptr->Name);
+	printf("ID: %s\n", ptr->Id);
+	printf("Date of Birth: ");
+	printdate(ptr2birth);
+	printf("");
+	printf("");
+}
+
+void search_id(LibMember *ptr)
 {
 }
 
