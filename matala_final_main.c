@@ -41,7 +41,9 @@ int search_id(LibMember *, int, char[]);
 void printdate(Date *);
 void printloanedbook(LibMember *, int);
 int menu();
+void menu_switchcase(int);
 void add_member(LibMember *, int);
+void check_if_memory_allocated(int *);
 void formatName(char *str);
 int hasNumber(const char *str);
 int isOnlyLetters(const char *str);
@@ -132,6 +134,84 @@ int menu()
 	return menu_choice;
 }
 
+// Gets menu choice and uses switch-case to get to chosen function
+void menu_switchcase(int menu_choice)
+{
+	switch (menu_choice)
+	{
+	case 1: /*add_member();*/
+		break;
+	case 2: /*loan_books();*/
+		break;
+	case 3: /*return_books();*/
+		break;
+	case 4: /*check_books_overdue();*/
+		break;
+	case 5: /*delete_member();*/
+		break;
+	case 6: /*print_members();*/
+		break;
+	case 7: /*quit();*/
+		break;
+	}
+}
+
+void add_member(LibMember *ptr, int activeUsers)
+{
+	LibMember newMember;
+	char name[40];
+	char Id[IDdigits];
+
+	do
+	{ // Gets name and checks if valid
+
+		// Flushes buffer to eliminate endless loop.
+		fseek(stdin, 0, SEEK_END);
+
+		printf("Enter your name: ");
+
+		fgets(name, sizeof(name), stdin);
+
+		if (name[strlen(name) - 1] == '\n')
+			name[strlen(name) - 1] = '\0';
+
+		if (!isOnlyLetters(name))
+			printf("Error a valid name\n");
+
+	} while (!isOnlyLetters(name));
+
+	formatName(name);
+
+	newMember.Name = (char *)malloc((strlen(name) + 1) * sizeof(char));
+
+	// If Memory allocation is OK copy string to Name.
+	if (newMember.Name != NULL)
+	{
+		strcpy(newMember.Name, name);
+	}
+	else // If Memory allocation not OK - exit.
+	{
+		printf("Memory allocation for name failed\n");
+		exit(0);
+	}
+
+	do
+	{ // Gets ID numbers and check if its valid
+
+		// Flushes buffer to eliminate endless loop.
+		fseek(stdin, 0, SEEK_END);
+
+		printf("Enter your id: ");
+		fgets(Id, sizeof(Id), stdin);
+
+		if (!isOnlyNumbers(Id))
+			printf("enter only numbers");
+
+	} while (!isOnlyNumbers(Id));
+
+	strcpy(newMember.Id, Id);
+}
+
 void formatName(char *str)
 {
 	*str = toupper(*str); // First letter to-be uppercase
@@ -184,35 +264,18 @@ int isOnlyNumbers(const char *str)
 	}
 	return true; // Return 1 if only numbers are found
 }
-
-void add_member(LibMember *ptr, int activeUsers)
+void check_if_memory_allocated(int *ptr)
 {
-	char name[40] = {'a'};
-	char id[9];
-	Date date_of_birth;
-	do
-	{ // Gets name and checks if valid
-		printf("Enter your name: ");
-		fgets(name, sizeof(name), stdin);
+	if (!ptr)
+	{
+		// Allocation failed
+		printf("Memory allocation failed\n");
+		exit(0);
+	}
 
-		if (name[strlen(name) - 1] == '\n')
-			name[strlen(name) - 1] = '\0';
-
-		if (!isOnlyLetters(name))
-			printf("Error a valid name\n");
-
-	} while (!isOnlyLetters(name));
-
-	formatName(name);
-
-	do
-	{ // Gets ID numbers and check if its valid
-
-		printf("Enter your id: ");
-		fgets(id, sizeof(id), stdin);
-
-		if (!isOnlyNumbers(id))
-			printf("enter only numbers");
-
-	} while (!isOnlyNumbers(id));
+	else
+	{
+		// Allocation succeeded
+		printf("Memory allocation successful\n");
+	}
 }
