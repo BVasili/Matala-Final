@@ -45,15 +45,16 @@ void add_member(LibMember *, int);
 
 // Function Declaration
 void printdate(Date *);
-void bubblesortid(LibMember *, int);
+void bubblesortID(LibMember *, int);
 void printloanedbook(LibMember *, int);
-void check_if_memory_allocated(int *);
+bool check_if_memory_allocated(int *);
 void formatName(char *str);
 int hasNumber(const char *str);
 int isOnlyLetters(const char *str);
 int isOnlyNumbers(const char *str);
 void inputNumber(LibMember *ptr, int size);
-void inputString(char, int size);
+void inputString(void *, int size);
+Date inputDate(void *);
 
 // Main function
 int main()
@@ -73,6 +74,7 @@ void printloanedbook(LibMember *ptr, int index)
 	printf("Name of book: %s\n", ptr->LoanBooks[index].BookName);
 	printf("Name of Author: %s\n", ptr->LoanBooks[index].AuthorName);
 	printf("Return date: ");
+
 	printdate(ptr2return);
 }
 
@@ -167,9 +169,6 @@ void add_member(LibMember *ptr, int activeUsers)
 	LibMember newMember;
 	char name[40];
 	char Id[IDdigits];
-	short unsigned int year = 0;
-	short unsigned int month = 0;
-	short unsigned int day = 0;
 
 	do
 	{ // Gets name and checks if valid
@@ -190,19 +189,8 @@ void add_member(LibMember *ptr, int activeUsers)
 	} while (!isOnlyLetters(name));
 
 	formatName(name);
-
 	newMember.Name = (char *)malloc((strlen(name) + 1) * sizeof(char));
-
-	// If Memory allocation is OK copy string to Name.
-	if (newMember.Name != NULL)
-	{
-		strcpy(newMember.Name, name);
-	}
-	else // If Memory allocation not OK - exit.
-	{
-		printf("Memory allocation for name failed\n");
-		exit(0);
-	}
+	check_if_memory_allocated(newMember.Name);
 
 	do
 	{ // Gets ID numbers and check if its valid
@@ -237,14 +225,23 @@ void add_member(LibMember *ptr, int activeUsers)
 
 void formatName(char *str)
 {
-	*str = toupper(*str); // First letter to-be uppercase
+	int isFirst = 1; // Flag to track if current character is first in a word
+
 	while (*str)
 	{
-		*str = tolower(*str);
-
-		if (*(str - 1) == ' ')
-			*str = toupper(*str);
-
+		if (isFirst && isalpha(*str))
+		{
+			*str = toupper(*str); // Uppercase the first letter of a word
+			isFirst = 0;		  // Reset flag after capitalizing first letter
+		}
+		else if (!isalpha(*str))
+		{
+			isFirst = 1; // Set flag if encountering non-alphabetic characters (new word)
+		}
+		else
+		{
+			*str = tolower(*str); // Lowercase the rest of the letters
+		}
 		str++;
 	}
 }
@@ -287,7 +284,8 @@ int isOnlyNumbers(const char *str)
 	}
 	return true; // Return 1 if only numbers are found
 }
-void check_if_memory_allocated(int *ptr)
+
+bool check_if_memory_allocated(void *ptr)
 {
 	if (!ptr)
 	{
@@ -300,6 +298,7 @@ void check_if_memory_allocated(int *ptr)
 	{
 		// Allocation succeeded
 		printf("Memory allocation successful\n");
+		return true;
 	}
 }
 
@@ -320,6 +319,27 @@ void inputNumber(LibMember *ptr, int size)
 	} while (!isOnlyNumbers(ptr));
 }
 
-void inputString(char string[], int size)
+void inputString(void *ptr, int size)
+{
+	do
+	{ // Gets string and checks if valid
+
+		// Flushes buffer to eliminate endless loop.
+		fseek(stdin, 0, SEEK_END);
+
+		printf("Enter your name: ");
+
+		fgets(ptr, size, stdin);
+
+		if (((char *)ptr)[strlen(ptr) - 1] == '\n')
+			((char *)ptr)[strlen(ptr) - 1] = '\0';
+
+		if (!isOnlyLetters(ptr))
+			printf("Error a valid string\n");
+
+	} while (!isOnlyLetters(ptr));
+}
+
+Date inputDate(void *ptr)
 {
 }
