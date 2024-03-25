@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 
 // Constants
 #define nMems 300
@@ -35,19 +36,24 @@ typedef struct
 	Book *LoanBooks;
 } LibMember;
 
-// Function Declaration
+// Core Functions Decleration:
 void print_member(LibMember *);
 int search_id(LibMember *, int, char[]);
-void printdate(Date *);
-void printloanedbook(LibMember *, int);
 int menu();
 void menu_switchcase(int);
 void add_member(LibMember *, int);
+
+// Function Declaration
+void printdate(Date *);
+void bubblesortid(LibMember *, int);
+void printloanedbook(LibMember *, int);
 void check_if_memory_allocated(int *);
 void formatName(char *str);
 int hasNumber(const char *str);
 int isOnlyLetters(const char *str);
 int isOnlyNumbers(const char *str);
+void inputNumber(LibMember *ptr, int size);
+void inputString(char, int size);
 
 // Main function
 int main()
@@ -91,7 +97,7 @@ void print_member(LibMember *ptr)
 }
 
 // Searches for ID in Database.
-int search_id(LibMember member_array[], int activeUsers, char id[])
+int search_id(const LibMember member_array[], int activeUsers, char id[])
 {
 	// Compares given ID to the database and returns index if found.
 	for (int i = 0; i < activeUsers; i++)
@@ -161,6 +167,9 @@ void add_member(LibMember *ptr, int activeUsers)
 	LibMember newMember;
 	char name[40];
 	char Id[IDdigits];
+	short unsigned int year = 0;
+	short unsigned int month = 0;
+	short unsigned int day = 0;
 
 	do
 	{ // Gets name and checks if valid
@@ -210,6 +219,20 @@ void add_member(LibMember *ptr, int activeUsers)
 	} while (!isOnlyNumbers(Id));
 
 	strcpy(newMember.Id, Id);
+
+	do
+	{ // Gets  year numbers and check if its valid
+
+		// Flushes buffer to eliminate endless loop.
+		fseek(stdin, 0, SEEK_END);
+
+		printf("Enter your birth year: ");
+		fgets(newMember.DateOfBirth.Year, sizeof(short unsigned int), stdin);
+
+		if (!isOnlyNumbers(newMember.DateOfBirth.Year))
+			printf("enter only numbers");
+
+	} while (!isOnlyNumbers(newMember.DateOfBirth.Year));
 }
 
 void formatName(char *str)
@@ -278,4 +301,25 @@ void check_if_memory_allocated(int *ptr)
 		// Allocation succeeded
 		printf("Memory allocation successful\n");
 	}
+}
+
+void inputNumber(LibMember *ptr, int size)
+{
+	do
+	{ // Gets  year numbers and check if its valid
+
+		// Flushes buffer to eliminate endless loop.
+		fseek(stdin, 0, SEEK_END);
+
+		printf("Enter your birth year: ");
+		fgets(ptr, size, stdin);
+
+		if (!isOnlyNumbers(ptr))
+			printf("enter only numbers");
+
+	} while (!isOnlyNumbers(ptr));
+}
+
+void inputString(char string[], int size)
+{
 }
